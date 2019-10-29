@@ -41,4 +41,14 @@ std::optional<IMUAccelerometer::StateData> IMUAccelerometer::GetState() const
     return std::nullopt;
 }
 
+void IMUAccelerometer::LoadDefaults()
+{
+  SetControlExpression(0, "Accel Left");
+  SetControlExpression(1, "Accel Right");
+  SetControlExpression(2, "Accel Forward");
+  SetControlExpression(3, "Accel Backward");
+  SetControlExpression(4, "Accel Up");
+  SetControlExpression(5, "Accel Down");
+}
+
 }  // namespace ControllerEmu

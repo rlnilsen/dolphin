@@ -11,6 +11,7 @@ class QFormLayout;
 class QGroupBox;
 class QHBoxLayout;
 class QLabel;
+class QPushButton;
 class QVBoxLayout;
 
 class WiimoteEmuMotionControlIMU final : public MappingWidget
@@ -25,7 +26,9 @@ private:
   void LoadSettings() override;
   void SaveSettings() override;
   void CreateMainLayout();
-
+  template <class ControlGroup>
+  QGroupBox* AddResetToDefaultButton(QGroupBox* groupbox, ControlGroup* controlgroup);
+  MappingWindow* m_parent;
   // Main
   QVBoxLayout* m_main_layout;
 };

@@ -20,5 +20,7 @@ public:
   IMUGyroscope(std::string name, std::string ui_name);
 
   std::optional<StateData> GetState() const;
+
+  void LoadDefaults();
 };
 }  // namespace ControllerEmu
