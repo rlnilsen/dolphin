@@ -15,13 +15,14 @@
 
 namespace ControllerEmu
 {
-ControlGroup::ControlGroup(std::string name_, const GroupType type_)
-    : name(name_), ui_name(std::move(name_)), type(type_)
+ControlGroup::ControlGroup(std::string name_, const GroupType type_, bool disablable_)
+    : name(name_), ui_name(std::move(name_)), type(type_), disablable(disablable_)
 {
 }
 
-ControlGroup::ControlGroup(std::string name_, std::string ui_name_, const GroupType type_)
-    : name(std::move(name_)), ui_name(std::move(ui_name_)), type(type_)
+ControlGroup::ControlGroup(std::string name_, std::string ui_name_, const GroupType type_,
+                           bool disablable_)
+    : name(std::move(name_)), ui_name(std::move(ui_name_)), type(type_), disablable(disablable_)
 {
 }
 
@@ -42,6 +43,9 @@ void ControlGroup::LoadConfig(IniFile::Section* sec, const std::string& defdev,
                               const std::string& base)
 {
   const std::string group(base + name + "/");
+
+  // enabled
+  sec->Get(group + "Enabled", &enabled, true);
 
   for (auto& setting : numeric_settings)
     setting->LoadFromIni(*sec, group);
@@ -87,6 +91,9 @@ void ControlGroup::SaveConfig(IniFile::Section* sec, const std::string& defdev,
                               const std::string& base)
 {
   const std::string group(base + name + "/");
+
+  // enabled
+  sec->Set(group + "Enabled", enabled, true);
 
   for (auto& setting : numeric_settings)
     setting->SaveToIni(*sec, group);

@@ -61,6 +61,13 @@ QGroupBox* MappingWidget::CreateGroupBox(const QString& name, ControllerEmu::Con
   QGroupBox* group_box = new QGroupBox(name);
   QFormLayout* form_layout = new QFormLayout();
 
+  group_box->setCheckable(group->disablable);
+  group_box->setChecked(group->enabled);
+  connect(group_box, &QGroupBox::toggled, this, [this, group, group_box] {
+    group->enabled = group_box->isChecked();
+    SaveSettings();
+  });
+
   group_box->setLayout(form_layout);
 
   const bool need_indicator = group->type == ControllerEmu::GroupType::Cursor ||
