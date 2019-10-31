@@ -4,6 +4,8 @@
 
 #include "DolphinQt/Config/Mapping/MappingWindow.h"
 
+#include <limits>
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -230,7 +232,10 @@ void MappingWindow::OnLoadProfilePressed()
   IniFile ini;
   ini.Load(profile_path.toStdString());
 
-  m_controller->LoadConfig(ini.GetOrCreateSection("Profile"));
+  int loaded_version;
+  ini.GetOrCreateSection("Meta")->Get("Version", &loaded_version, 0);
+
+  m_controller->LoadConfig(ini.GetOrCreateSection("Profile"), loaded_version);
   m_controller->UpdateReferences(g_controller_interface);
 
   emit ConfigChanged();
@@ -250,6 +255,8 @@ void MappingWindow::OnSaveProfilePressed()
   File::CreateFullPath(profile_path);
 
   IniFile ini;
+
+  ini.GetOrCreateSection("Meta")->Set("Version", m_config->GetCurrentVersion());
 
   m_controller->SaveConfig(ini.GetOrCreateSection("Profile"));
   ini.Save(profile_path);
@@ -425,7 +432,7 @@ void MappingWindow::OnClearFieldsPressed()
 
   // Keep the currently selected device.
   const auto default_device = m_controller->GetDefaultDevice();
-  m_controller->LoadConfig(&sec);
+  m_controller->LoadConfig(&sec, std::numeric_limits<int>::max());
   m_controller->SetDefaultDevice(default_device);
 
   m_controller->UpdateReferences(g_controller_interface);

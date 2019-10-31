@@ -81,7 +81,11 @@ void ProfileCycler::UpdateToProfile(const std::string& profile_filename,
     Core::DisplayMessage("Loading input profile '" + base + "' for device '" +
                              controller->GetName() + "'",
                          display_message_ms);
-    controller->LoadConfig(ini_file.GetOrCreateSection("Profile"));
+
+    int loaded_version;
+    ini_file.GetOrCreateSection("Meta")->Get("Version", &loaded_version, 0);
+
+    controller->LoadConfig(ini_file.GetOrCreateSection("Profile"), loaded_version);
     controller->UpdateReferences(g_controller_interface);
   }
   else

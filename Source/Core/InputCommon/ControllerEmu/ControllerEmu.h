@@ -37,7 +37,7 @@ public:
 
   virtual void LoadDefaults(const ControllerInterface& ciface);
 
-  virtual void LoadConfig(IniFile::Section* sec, const std::string& base = "");
+  virtual void LoadConfig(IniFile::Section* sec, int loaded_version, const std::string& base = "");
   virtual void SaveConfig(IniFile::Section* sec, const std::string& base = "");
 
   bool IsDefaultDeviceConnected() const;

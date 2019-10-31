@@ -60,7 +60,7 @@ public:
                CanBeDisabledOption can_be_disabled_option = CanNotBeDisabled);
   virtual ~ControlGroup();
 
-  virtual void LoadConfig(IniFile::Section* sec, const std::string& defdev = "",
+  virtual void LoadConfig(IniFile::Section* sec, int loaded_version, const std::string& defdev = "",
                           const std::string& base = "");
   virtual void SaveConfig(IniFile::Section* sec, const std::string& defdev = "",
                           const std::string& base = "");

@@ -4,6 +4,7 @@
 
 #include "InputCommon/ControllerEmu/ControllerEmu.h"
 
+#include <limits>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -104,7 +105,8 @@ void EmulatedController::SetDefaultDevice(ciface::Core::DeviceQualifier devq)
   }
 }
 
-void EmulatedController::LoadConfig(IniFile::Section* sec, const std::string& base)
+void EmulatedController::LoadConfig(IniFile::Section* sec, int loaded_version,
+                                    const std::string& base)
 {
   std::string defdev = GetDefaultDevice().ToString();
   if (base.empty())
@@ -114,7 +116,7 @@ void EmulatedController::LoadConfig(IniFile::Section* sec, const std::string& ba
   }
 
   for (auto& cg : groups)
-    cg->LoadConfig(sec, defdev, base);
+    cg->LoadConfig(sec, loaded_version, defdev, base);
 }
 
 void EmulatedController::SaveConfig(IniFile::Section* sec, const std::string& base)
@@ -131,7 +133,7 @@ void EmulatedController::LoadDefaults(const ControllerInterface& ciface)
 {
   // load an empty inifile section, clears everything
   IniFile::Section sec;
-  LoadConfig(&sec);
+  LoadConfig(&sec, std::numeric_limits<int>::max());
 
   const std::string& default_device_string = ciface.GetDefaultDeviceString();
   if (!default_device_string.empty())

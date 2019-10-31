@@ -15,7 +15,9 @@
 
 namespace Pad
 {
-static InputConfig s_config("GCPadNew", _trans("Pad"), "GCPad");
+static constexpr int CONFIG_VERSION = 1;
+
+static InputConfig s_config("GCPadNew", CONFIG_VERSION, _trans("Pad"), "GCPad");
 InputConfig* GetConfig()
 {
   return &s_config;

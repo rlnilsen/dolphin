@@ -28,7 +28,9 @@ static std::array<u8, MAX_BBMOTES> s_last_connect_request_counter;
 
 namespace Wiimote
 {
-static InputConfig s_config(WIIMOTE_INI_NAME, _trans("Wii Remote"), "Wiimote");
+static constexpr int CONFIG_VERSION = 1;
+
+static InputConfig s_config(WIIMOTE_INI_NAME, CONFIG_VERSION, _trans("Wii Remote"), "Wiimote");
 
 InputConfig* GetConfig()
 {

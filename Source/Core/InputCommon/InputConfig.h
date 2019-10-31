@@ -19,7 +19,7 @@ class EmulatedController;
 class InputConfig
 {
 public:
-  InputConfig(const std::string& ini_name, const std::string& gui_name,
+  InputConfig(const std::string& ini_name, int current_version, const std::string& gui_name,
               const std::string& profile_name);
 
   ~InputConfig();
@@ -41,6 +41,7 @@ public:
   std::string GetGUIName() const { return m_gui_name; }
   std::string GetProfileName() const { return m_profile_name; }
   std::size_t GetControllerCount() const;
+  int GetCurrentVersion() const { return m_current_version; }
 
   // These should be used after creating all controllers and before clearing them, respectively.
   void RegisterHotplugCallback();
@@ -52,4 +53,5 @@ private:
   const std::string m_ini_name;
   const std::string m_gui_name;
   const std::string m_profile_name;
+  const int m_current_version;
 };

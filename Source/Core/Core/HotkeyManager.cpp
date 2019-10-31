@@ -188,11 +188,13 @@ static_assert(NUM_HOTKEYS == s_hotkey_labels.size(), "Wrong count of hotkey_labe
 
 namespace HotkeyManagerEmu
 {
+static constexpr int CONFIG_VERSION = 1;
+
 static std::array<u32, NUM_HOTKEY_GROUPS> s_hotkey_down;
 static HotkeyStatus s_hotkey;
 static bool s_enabled;
 
-static InputConfig s_config("Hotkeys", _trans("Hotkeys"), "Hotkeys");
+static InputConfig s_config("Hotkeys", CONFIG_VERSION, _trans("Hotkeys"), "Hotkeys");
 
 InputConfig* GetConfig()
 {

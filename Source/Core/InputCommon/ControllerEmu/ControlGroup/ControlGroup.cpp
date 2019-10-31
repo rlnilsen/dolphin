@@ -42,7 +42,7 @@ void ControlGroup::AddDeadzoneSetting(SettingValue<double>* value, double maximu
 
 ControlGroup::~ControlGroup() = default;
 
-void ControlGroup::LoadConfig(IniFile::Section* sec, const std::string& defdev,
+void ControlGroup::LoadConfig(IniFile::Section* sec, int loaded_version, const std::string& defdev,
                               const std::string& base)
 {
   const std::string group(base + name + "/");
@@ -81,7 +81,7 @@ void ControlGroup::LoadConfig(IniFile::Section* sec, const std::string& defdev,
     for (auto& ai : ext->GetAttachmentList())
     {
       ai->SetDefaultDevice(defdev);
-      ai->LoadConfig(sec, base + ai->GetName() + "/");
+      ai->LoadConfig(sec, loaded_version, base + ai->GetName() + "/");
 
       if (ai->GetName() == extname)
         ext->SetSelectedAttachment(n);

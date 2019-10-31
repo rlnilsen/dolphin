@@ -18,7 +18,9 @@
 
 namespace Keyboard
 {
-static InputConfig s_config("GCKeyNew", _trans("Keyboard"), "GCKey");
+static constexpr int CONFIG_VERSION = 1;
+
+static InputConfig s_config("GCKeyNew", CONFIG_VERSION, _trans("Keyboard"), "GCKey");
 InputConfig* GetConfig()
 {
   return &s_config;

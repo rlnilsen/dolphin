@@ -104,7 +104,8 @@ protected:
   ReshapeData Reshape(ControlState x, ControlState y, ControlState modifier = 0.0);
 
 private:
-  void LoadConfig(IniFile::Section*, const std::string&, const std::string&) override;
+  void LoadConfig(IniFile::Section*, int loaded_version, const std::string&,
+                  const std::string&) override;
   void SaveConfig(IniFile::Section*, const std::string&, const std::string&) override;
 
   CalibrationData m_calibration;

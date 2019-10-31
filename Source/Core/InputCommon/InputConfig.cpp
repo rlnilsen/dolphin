@@ -18,9 +18,10 @@
 #include "InputCommon/InputConfig.h"
 #include "InputCommon/InputProfile.h"
 
-InputConfig::InputConfig(const std::string& ini_name, const std::string& gui_name,
-                         const std::string& profile_name)
-    : m_ini_name(ini_name), m_gui_name(gui_name), m_profile_name(profile_name)
+InputConfig::InputConfig(const std::string& ini_name, int current_version,
+                         const std::string& gui_name, const std::string& profile_name)
+    : m_ini_name(ini_name), m_gui_name(gui_name), m_profile_name(profile_name),
+      m_current_version(current_version)
 {
 }
 
@@ -93,6 +94,7 @@ bool InputConfig::LoadConfig(bool isGC)
 #endif
   }
 
+  int loaded_version = -1;  // init with illegal value to help debugging
   if (inifile.Load(File::GetUserPath(D_CONFIG_IDX) + m_ini_name + ".ini"))
   {
     int n = 0;
@@ -110,10 +112,12 @@ bool InputConfig::LoadConfig(bool isGC)
 
         IniFile profile_ini;
         profile_ini.Load(profile[n]);
+        profile_ini.GetOrCreateSection("Meta")->Get("Version", &loaded_version, 0);
         config = *profile_ini.GetOrCreateSection("Profile");
       }
       else
       {
+        inifile.GetOrCreateSection("Meta")->Get("Version", &loaded_version, 0);
         config = *inifile.GetOrCreateSection(controller->GetName());
       }
 #if defined(ANDROID)
@@ -125,7 +129,7 @@ bool InputConfig::LoadConfig(bool isGC)
         config.Set("IR/Vertical Offset", ir_values[2]);
       }
 #endif
-      controller->LoadConfig(&config);
+      controller->LoadConfig(&config, loaded_version);
       // Update refs
       controller->UpdateReferences(g_controller_interface);
 
@@ -148,6 +152,8 @@ void InputConfig::SaveConfig()
 
   IniFile inifile;
   inifile.Load(ini_filename);
+
+  inifile.GetOrCreateSection("Meta")->Set("Version", m_current_version);
 
   for (auto& controller : m_controllers)
     controller->SaveConfig(inifile.GetOrCreateSection(controller->GetName()));

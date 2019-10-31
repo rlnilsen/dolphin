@@ -227,10 +227,10 @@ void ReshapableInput::SetCenter(ReshapableInput::ReshapeData center)
   m_center = center;
 }
 
-void ReshapableInput::LoadConfig(IniFile::Section* section, const std::string& default_device,
-                                 const std::string& base_name)
+void ReshapableInput::LoadConfig(IniFile::Section* section, int loaded_version,
+                                 const std::string& default_device, const std::string& base_name)
 {
-  ControlGroup::LoadConfig(section, default_device, base_name);
+  ControlGroup::LoadConfig(section, loaded_version, default_device, base_name);
 
   const std::string group(base_name + name + '/');
   std::string load_str;
