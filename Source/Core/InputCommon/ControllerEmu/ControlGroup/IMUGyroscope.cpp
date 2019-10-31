@@ -41,4 +41,26 @@ std::optional<IMUGyroscope::StateData> IMUGyroscope::GetState() const
     return std::nullopt;
 }
 
+void IMUGyroscope::LoadDefaults()
+{
+  // Set up bindings needed for DSU Client input devices
+  SetControlExpression(0, "Gyro Pitch Up");
+  SetControlExpression(1, "Gyro Pitch Down");
+  SetControlExpression(2, "Gyro Roll Left");
+  SetControlExpression(3, "Gyro Roll Right");
+  SetControlExpression(4, "Gyro Yaw Left");
+  SetControlExpression(5, "Gyro Yaw Right");
+}
+
+void IMUGyroscope::LoadConfig(IniFile::Section* sec, int loaded_version, const std::string& defdev,
+                              const std::string& base)
+{
+  ControlGroup::LoadConfig(sec, loaded_version, defdev, base);
+
+  static constexpr int MOTION_INPUT_SUPPORT_VERSION = 1;
+  // Loading a config from before motion input support was added would leave the gyroscope bindings
+  // blank. It is more helpful to load the default values.
+  if (loaded_version < MOTION_INPUT_SUPPORT_VERSION)
+    LoadDefaults();
+}
 }  // namespace ControllerEmu

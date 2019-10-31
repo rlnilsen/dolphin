@@ -41,4 +41,27 @@ std::optional<IMUAccelerometer::StateData> IMUAccelerometer::GetState() const
     return std::nullopt;
 }
 
+void IMUAccelerometer::LoadDefaults()
+{
+  // Set up bindings needed for DSU Client input devices
+  SetControlExpression(0, "Accel Left");
+  SetControlExpression(1, "Accel Right");
+  SetControlExpression(2, "Accel Forward");
+  SetControlExpression(3, "Accel Backward");
+  SetControlExpression(4, "Accel Up");
+  SetControlExpression(5, "Accel Down");
+}
+
+void IMUAccelerometer::LoadConfig(IniFile::Section* sec, int loaded_version,
+                                  const std::string& defdev, const std::string& base)
+{
+  ControlGroup::LoadConfig(sec, loaded_version, defdev, base);
+
+  static constexpr int MOTION_INPUT_SUPPORT_VERSION = 1;
+
+  // Loading a config from before motion input support was added would leave the accelerometer
+  // bindings blank. It is more helpful to load the default values.
+  if (loaded_version < MOTION_INPUT_SUPPORT_VERSION)
+    LoadDefaults();
+}
 }  // namespace ControllerEmu

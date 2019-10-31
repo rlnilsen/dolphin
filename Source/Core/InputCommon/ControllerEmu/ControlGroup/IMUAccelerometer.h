@@ -20,5 +20,9 @@ public:
   IMUAccelerometer(std::string name, std::string ui_name);
 
   std::optional<StateData> GetState() const;
+
+  void LoadDefaults();
+  void LoadConfig(IniFile::Section* sec, int loaded_version, const std::string& defdev,
+                  const std::string& base) override;
 };
 }  // namespace ControllerEmu
