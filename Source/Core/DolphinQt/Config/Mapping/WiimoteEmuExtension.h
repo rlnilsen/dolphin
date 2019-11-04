@@ -10,6 +10,7 @@
 
 class QGroupBox;
 class QHBoxLayout;
+class QWidget;
 
 class WiimoteEmuExtension final : public MappingWidget
 {
@@ -42,7 +43,7 @@ private:
   QGroupBox* m_drums_box;
   QGroupBox* m_guitar_box;
   QGroupBox* m_none_box;
-  QGroupBox* m_nunchuk_box;
+  QWidget* m_nunchuk_box;
   QGroupBox* m_turntable_box;
   QGroupBox* m_udraw_tablet_box;
   QGroupBox* m_drawsome_tablet_box;

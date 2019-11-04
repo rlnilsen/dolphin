@@ -8,6 +8,7 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QPushButton>
 
 #include "Core/HW/Wiimote.h"
 #include "Core/HW/WiimoteEmu/Extension/Classic.h"
@@ -19,6 +20,8 @@
 #include "Core/HW/WiimoteEmu/Extension/Turntable.h"
 #include "Core/HW/WiimoteEmu/Extension/UDrawTablet.h"
 #include "Core/HW/WiimoteEmu/WiimoteEmu.h"
+
+#include "DolphinQt/Config/ControllerInterface/ControllerInterfaceWindow.h"
 
 #include "InputCommon/InputConfig.h"
 
@@ -97,29 +100,87 @@ void WiimoteEmuExtension::CreateNoneLayout()
   m_none_box->setLayout(hbox);
 }
 
+static void ScaleHorizontalSpacing(QGridLayout* layout, double scale)
+{
+  layout->setHorizontalSpacing(layout->horizontalSpacing() * scale);
+}
+
+static void ScaleHorizontalMargin(QLayout* layout, double scale)
+{
+  int left, top, right, bottom;
+  layout->getContentsMargins(&left, &top, &right, &bottom);
+  left = left * scale;
+  right = right * scale;
+  layout->setContentsMargins(left, top, right, bottom);
+}
+
+static QWidget* ScaleHorizontalMarginTo50Percent(QWidget* widget)
+{
+  ScaleHorizontalMargin(widget->layout(), 0.5);
+  return widget;
+}
+
 void WiimoteEmuExtension::CreateNunchukLayout()
 {
-  auto* layout = new QGridLayout();
-  m_nunchuk_box = new QGroupBox(tr("Nunchuk"), this);
+  auto* top_layout = new QVBoxLayout();
+  m_nunchuk_box = new QWidget(this);
+  m_nunchuk_box->setLayout(top_layout);
+  top_layout->setContentsMargins(0, 0, 0, 0);
 
-  layout->addWidget(CreateGroupBox(tr("Stick"), Wiimote::GetNunchukGroup(
-                                                    GetPort(), WiimoteEmu::NunchukGroup::Stick)),
-                    0, 0);
-  layout->addWidget(
-      CreateGroupBox(tr("Buttons"),
-                     Wiimote::GetNunchukGroup(GetPort(), WiimoteEmu::NunchukGroup::Buttons)),
+  auto* warning_layout = new QHBoxLayout();
+  auto* warning_label = new QLabel(
+      tr("WARNING: The controls under Accelerometer are designed to interface directly with motion "
+         "sensor hardware. They are not intended for mapping traditional buttons, triggers or "
+         "axes. You might need to configure alternate input sources before using these controls."));
+  warning_label->setWordWrap(true);
+  auto* warning_input_sources_button = new QPushButton(tr("Alternate Input Sources"));
+  warning_layout->addWidget(warning_label, 1);
+  warning_layout->addWidget(warning_input_sources_button, 0, Qt::AlignRight);
+  connect(warning_input_sources_button, &QPushButton::clicked, this, [this] {
+    ControllerInterfaceWindow* window = new ControllerInterfaceWindow(this);
+    window->setAttribute(Qt::WA_DeleteOnClose, true);
+    window->setWindowModality(Qt::WindowModality::WindowModal);
+    window->show();
+  });
+  top_layout->addLayout(warning_layout);
+
+  // The layouts of the parent group box and each of the five child group boxes are slightly
+  // adjusted to allow fitting five child groups on a 1024 pixel wide screen.
+
+  auto* groups_layout = new QGridLayout();
+  auto* groups_box = new QGroupBox(tr("Nunchuk"));
+  groups_box->setLayout(groups_layout);
+  groups_box->setFlat(true);
+  ScaleHorizontalMargin(groups_layout, 0);
+  ScaleHorizontalSpacing(groups_layout, 0.9);
+
+  groups_layout->addWidget(
+      ScaleHorizontalMarginTo50Percent(CreateGroupBox(
+          tr("Stick"), Wiimote::GetNunchukGroup(GetPort(), WiimoteEmu::NunchukGroup::Stick))),
+      0, 0);
+  groups_layout->addWidget(
+      ScaleHorizontalMarginTo50Percent(CreateGroupBox(
+          tr("Buttons"), Wiimote::GetNunchukGroup(GetPort(), WiimoteEmu::NunchukGroup::Buttons))),
       1, 0);
-  layout->addWidget(CreateGroupBox(tr("Shake"), Wiimote::GetNunchukGroup(
-                                                    GetPort(), WiimoteEmu::NunchukGroup::Shake)),
-                    0, 1, -1, 1);
-  layout->addWidget(CreateGroupBox(tr("Tilt"), Wiimote::GetNunchukGroup(
-                                                   GetPort(), WiimoteEmu::NunchukGroup::Tilt)),
-                    0, 2, -1, 1);
-  layout->addWidget(CreateGroupBox(tr("Swing"), Wiimote::GetNunchukGroup(
-                                                    GetPort(), WiimoteEmu::NunchukGroup::Swing)),
-                    0, 3, -1, 1);
+  groups_layout->addWidget(
+      ScaleHorizontalMarginTo50Percent(CreateGroupBox(
+          tr("Shake"), Wiimote::GetNunchukGroup(GetPort(), WiimoteEmu::NunchukGroup::Shake))),
+      0, 1, -1, 1);
+  groups_layout->addWidget(
+      ScaleHorizontalMarginTo50Percent(CreateGroupBox(
+          tr("Tilt"), Wiimote::GetNunchukGroup(GetPort(), WiimoteEmu::NunchukGroup::Tilt))),
+      0, 2, -1, 1);
+  groups_layout->addWidget(
+      ScaleHorizontalMarginTo50Percent(CreateGroupBox(
+          tr("Swing"), Wiimote::GetNunchukGroup(GetPort(), WiimoteEmu::NunchukGroup::Swing))),
+      0, 3, -1, 1);
+  groups_layout->addWidget(
+      ScaleHorizontalMarginTo50Percent(CreateGroupBox(
+          tr("Accelerometer"),
+          Wiimote::GetNunchukGroup(GetPort(), WiimoteEmu::NunchukGroup::IMUAccelerometer))),
+      0, 4, -1, 1);
 
-  m_nunchuk_box->setLayout(layout);
+  top_layout->addWidget(groups_box);
 }
 
 void WiimoteEmuExtension::CreateGuitarLayout()
